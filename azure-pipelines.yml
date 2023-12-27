@@ -6,9 +6,6 @@
 trigger:
 - master
 
-trigger:
-- main  # Set the branch to trigger the pipeline on changes
-
 pool:
   vmImage: 'ubuntu-latest'  # Specify the build agent image
 
