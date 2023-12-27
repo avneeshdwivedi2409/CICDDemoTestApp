@@ -6,29 +6,27 @@
 trigger:
 - master
 
+trigger:
+- main  # Set the branch to trigger the pipeline on changes
+
 pool:
-  vmImage: 'windows-latest'
+  vmImage: 'ubuntu-latest'  # Specify the build agent image
 
-variables:
-  solution: '**/*.sln'
-  buildPlatform: 'Any CPU'
-  buildConfiguration: 'Release'
+stages:
+- stage: Build
+  jobs:
+  - job: Build
+    steps:
+    - script: echo 'Building the application'
 
-steps:
-- task: NuGetToolInstaller@1
+- stage: Test
+  jobs:
+  - job: Test
+    steps:
+    - script: echo 'Running tests'
 
-- task: NuGetCommand@2
-  inputs:
-    restoreSolution: '$(solution)'
-
-- task: VSBuild@1
-  inputs:
-    solution: '$(solution)'
-    msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:DesktopBuildPackageLocation="$(build.artifactStagingDirectory)\WebApp.zip" /p:DeployIisAppPath="Default Web Site"'
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
-
-- task: VSTest@2
-  inputs:
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
+- stage: Deploy
+  jobs:
+  - job: Deploy
+    steps:
+    - script: echo 'Deploying the application'
